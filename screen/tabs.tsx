@@ -1,25 +1,22 @@
-import * as React from 'react';
-import { View, useWindowDimensions } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { useState } from 'react';
+import { Text, View, useWindowDimensions } from 'react-native';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import styled from 'styled-components';
+import todayAlarm from './today-alarm';
+import alarmManagement from './alarm-management';
 
-const FirstRoute = () => (
-  <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
-);
-
-const SecondRoute = () => (
-  <View style={{ flex: 1, backgroundColor: '#673ab7' }} />
-);
 
 const renderScene = SceneMap({
-  first: FirstRoute,
-  second: SecondRoute,
+  first: todayAlarm,
+  second: alarmManagement,
 });
+
 
 export default function TabViewExample() {
   const layout = useWindowDimensions();
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
     { key: 'first', title: '오늘 알람' },
     { key: 'second', title: '알람 관리' },
   ]);
@@ -30,6 +27,7 @@ export default function TabViewExample() {
       renderScene={renderScene}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
+      renderTabBar={props => null}
     />
   );
 }

@@ -1,11 +1,11 @@
-import { Platform, TouchableOpacity, View } from "react-native"
+import { TouchableOpacity, View } from "react-native"
 import styled from "styled-components"
-import Ionicons from '@expo/vector-icons/Ionicons';
 import TabViewExample from "./tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Calendar } from "react-native-calendars";
 
 
-const SafeContainer = styled(SafeAreaView)`
+const SafeContainer = styled(View)`
     background-color:white;
 `;
 
@@ -30,19 +30,27 @@ const CalendarContainer = styled(View)`
 const Tabs = styled(View)`
     height:50%;
     width: 100%;
-    background-color: yellowgreen;
 `;
+
+const markedDates = {
+    '2024-06-01':{selected:true, selectedColor:'yellow'},
+    '2024-06-02':{selected:true, selectedColor:'blue'},
+    '2024-06-03':{selected:true, selectedColor:'blue'}
+}
 
 export default () => {
 
     return (<SafeContainer>
-        <Header>
-        <DrawerButton>
-            <Ionicons name="menu" size={24} color="black" />
-        </DrawerButton>
-
-        </Header>
-        <CalendarContainer></CalendarContainer>
+        <CalendarContainer>
+            <Calendar
+            scr
+            markedDates={markedDates}
+                theme={{
+                    selectedDayBackgroundColor: 'blue',
+                    todayTextColor: "red"
+                }}
+            />
+        </CalendarContainer>
         <Tabs>{TabViewExample()}</Tabs>
     </SafeContainer>);
 }
