@@ -1,7 +1,8 @@
-import { Text, View } from "react-native";
+import { Switch, Text, View } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import React from "react";
 
 const Container = styled(View)`
   scroll-margin: 10px;
@@ -36,9 +37,7 @@ const DayText = styled(Text)`
 `;
 
 export default () => {
-  const [isChecked, setIsChecked] = useState(false);
-
-  useEffect(() => {});
+  const [isActivated, setIsActivated] = useState(false);
 
   return (
     <Container>
@@ -48,12 +47,7 @@ export default () => {
         <DayText>월 화</DayText>
       </Info>
 
-      <Checkbox
-        style={{}}
-        value={isChecked}
-        onValueChange={setIsChecked}
-        color={isChecked ? "#0097ec" : undefined}
-      />
+      <Switch style={{}} value={isActivated} onValueChange={setIsActivated} />
     </Container>
   );
 };
