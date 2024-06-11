@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   NativeSyntheticEvent,
@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
+import { loadAlarm, removeAllAlarm, saveAlarm } from "./async_storage_helper";
+import { AlarmData } from "./alarm-data-model";
 
 // {}를 써서 Dimensions 가 반환하는 여러 값에 접근하고 :를 써서 별칭을 붙여줌
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("screen");
@@ -26,9 +28,15 @@ const Divider = styled(View)`
   border: 0.6px solid grey;
 `;
 
+const ContentText = styled(Text)`
+font-size: 18px;
+`;
+
 const RowSection = styled(View)`
   flex-direction: row;
-  margin-bottom: 10px;
+  align-items: center;
+  align-content: center;
+  margin-bottom: 20px;
 `;
 
 const DaySelectionSection = styled(View)`
@@ -43,16 +51,20 @@ const DayList = styled(View)`
   justify-content: space-between;
 `;
 
-const DayButton = styled(TouchableOpacity)`
+const DayButton = styled(TouchableOpacity)<{ selected: boolean }>`
   justify-content: center;
   align-items: center;
   border-radius: 100px;
-  background-color: #0097ec;
   width: ${WIDTH * 0.1}px;
   height: ${WIDTH * 0.1}px;
+  background-color: ${({ selected }) => (selected ? "#0097ec" : "white" )};
 `;
 
-const DayText = styled(Text)``;
+const DayText = styled(Text)<{ selected: boolean }>`
+
+  font-size: 18px;
+  color: ${({ selected }) => (selected ? "white" : "black" )};
+`;
 
 const TitleText = styled(Text)`
   font-size: 20px;
@@ -70,6 +82,7 @@ const ContentInput = styled(TextInput)`
   width: 100%;
   border-bottom-width: 1px;
   border-bottom-color: black;
+  font-size: 18px;
 `;
 
 const RealarmSection = styled(View)`
@@ -88,12 +101,16 @@ const MinuteInput = styled(TextInput)`
   border-bottom-width: 1px;
   border-bottom-color: black;
   text-align: center;
+  font-size: 18px;
+
 `;
 
 const TimeInput = styled(TextInput)`
   border-bottom-width: 1px;
   border-bottom-color: black;
   text-align: center;
+  font-size: 18px;
+
 `;
 
 const MinuteLine = styled(View)`
@@ -113,7 +130,7 @@ const AddButtonText = styled(Text)`
   font-weight: bold;
 `;
 
-export type AlarmData = {
+export type AlarmDatas = {
   alarmID: String;
   isEveryday: boolean;
   dayList: Array<boolean>;
@@ -126,13 +143,25 @@ export type AlarmData = {
 };
 
 export default () => {
+
   const [content, setContent] = useState("");
   const [minute, setMinute] = useState(0);
   const [time, setTime] = useState(0);
   const [isEveryday, setIsEveryday] = useState(false);
   const [untilEat, setUntilEat] = useState(false);
+  const [dayList, setDayList] = useState([false,false,false,false,false,false,false]);
+  var alarmList:Array<AlarmData> = [];
+  var dayText = ["월", "화", "수", "목", "금", "토", "일"];
 
-  var dayList = ["월", "화", "수", "목", "금", "토", "일"];
+  useEffect(()=>{
+    removeAllAlarm();
+    loadAlarm().then((e)=>{
+      alarmList = e;
+    })
+    console.log(alarmList);
+  });
+
+  
 
   //onChange Text : 사용자 입력에 따라 변경된 인풋 이벤트(e)를 받아와 실행
   const onChangeText = (
@@ -141,6 +170,7 @@ export default () => {
   ) => {
     //1. 'e'에 담겨있는 사용자의 입력 텍스트를 가져온다
     const inputText = e.nativeEvent.text;
+    var num;
 
     //2. 입력 텍스트를 email, password state 에 저장한다.
     //2-1. 입력 텍스트가 email 이라면
@@ -150,15 +180,39 @@ export default () => {
         setContent(inputText);
         break;
       case "minute":
-        setMinute(Number(inputText));
+        num = Number(inputText);
+        if(num.toString()==="NaN"){
+          num = 0;
+        }
+        setMinute(Number(num));
         break;
       case "time":
-        setTime(Number(inputText));
+        num = Number(inputText);
+        if(num.toString()==="NaN"){
+          num = 0;
+        }
+        setTime(Number(num));
         break;
     }
   };
 
-  const addAlarm = () => {};
+  const onChangeDay = (index:number) =>{
+    const list = [...dayList];
+    list[index] = !list[index];
+    setDayList(list)
+    };
+
+  const addAlarm = async () => {
+    await removeAllAlarm();
+    var data:AlarmData = new AlarmData("asd",isEveryday,dayList,content,minute,time,untilEat,"test",true);
+    alarmList.push(data);
+    console.log(alarmList);
+    await saveAlarm(alarmList);
+    console.log("done")
+    var datas = await loadAlarm();
+    console.log("RESULT: "+datas)
+
+  };
 
   return (
     <SafeContainer>
@@ -168,16 +222,21 @@ export default () => {
           <Checkbox
             value={isEveryday}
             onValueChange={setIsEveryday}
-            color={isEveryday ? "blue" : undefined}
+            color={isEveryday ? "#0097ec" : undefined}
           />
-          <Text> 매일</Text>
+          <ContentText>  매일</ContentText>
         </RowSection>
         <DayList>
-          {dayList.map((e) => {
-            console.log(e);
+          {dayText.map((e, index) => {
             return (
-              <DayButton>
-                <DayText>{e}</DayText>
+              <DayButton 
+              key={index}
+              selected = {dayList[index]}
+              onPress={()=>{
+                onChangeDay(index);
+              }}
+              >
+                <DayText selected = {dayList[index]}>{e}</DayText>
               </DayButton>
             );
           })}
@@ -200,7 +259,7 @@ export default () => {
             value={minute.toString()}
             onChange={(e) => onChangeText(e, "minute")}
           />
-          <Text> 분 후 다시 알림</Text>
+          <ContentText>  분 후 다시 알림</ContentText>
         </MinuteLine>
         <TimeLine>
           <TimeInput
@@ -208,22 +267,22 @@ export default () => {
             value={time.toString()}
             onChange={(e) => onChangeText(e, "time")}
           />
-          <Text> 번 다시 알림</Text>
+          <ContentText>  번 다시 알림</ContentText>
         </TimeLine>
         <RowSection>
           <Checkbox
             value={untilEat}
             onValueChange={setUntilEat}
-            color={untilEat ? "blue" : undefined}
+            color={untilEat ? "#0097ec" : undefined}
           />
-          <Text> 복용 체크할 때 까지</Text>
+          <ContentText>  복용 체크할 때 까지</ContentText>
         </RowSection>
       </RealarmSection>
       <Divider />
       <SoundSection>
         <TitleText>알람음</TitleText>
       </SoundSection>
-      <AddButton>
+      <AddButton onPress={addAlarm}>
         <AddButtonText>추가하기</AddButtonText>
       </AddButton>
     </SafeContainer>
