@@ -38,15 +38,7 @@ export const loadRecord = async () => {
 };
 
 export const removeAllAlarm = async () => {
-  await AsyncStorage.removeItem("alarm");
-};
-
-export const saveAlarm = async (alarmList: Array<AlarmData>) => {
-  var json = JSON.stringify(alarmList);
-  await AsyncStorage.setItem("alarm", json);
-};
-
-export const saveRecord = async (alarmList: Array<AlarmData>) => {
-  var json = JSON.stringify(alarmList);
-  await AsyncStorage.setItem("record", json);
+  var user = await loadUser();
+  user.alarmData = [];
+  await saveUser(user);
 };

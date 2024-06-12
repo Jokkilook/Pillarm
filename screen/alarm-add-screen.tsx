@@ -13,17 +13,14 @@ import {
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
 import {
-  loadAlarm,
   loadUser,
   removeAllAlarm,
-  saveAlarm,
   saveUser,
 } from "./async_storage_helper";
 import { AlarmData } from "../models/alarm-data-model";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenList } from "../App";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { UserData } from "../models/user-data-model";
 
 // {}를 써서 Dimensions 가 반환하는 여러 값에 접근하고 :를 써서 별칭을 붙여줌
@@ -187,14 +184,16 @@ export default () => {
     false,
     false,
   ]);
-  var alarmList: Array<AlarmData> = [];
   const dayText = ["월", "화", "수", "목", "금", "토", "일"];
 
   useEffect(() => {
-    loadUser().then((user) => {
-      setUser(user);
-      alarmList = user.alarmData;
-    });
+    if(!user){
+      loadUser().then((user) => {
+        if(user){
+        setUser(user);
+        }
+      });
+    }
   });
 
   const onChangeText = (
@@ -333,6 +332,7 @@ export default () => {
         <ContentSection>
           <TitleText>내용</TitleText>
           <ContentInput
+            maxLength={10}
             value={content}
             onChange={(e) => onChangeText(e, "content")}
           />

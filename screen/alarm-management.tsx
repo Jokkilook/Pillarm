@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenList } from "../App";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AlarmData } from "../models/alarm-data-model";
-import { loadAlarm, loadUser } from "./async_storage_helper";
+import { loadUser } from "./async_storage_helper";
 import { useEffect, useState } from "react";
 import { UserData } from "../models/user-data-model";
 
@@ -37,7 +37,6 @@ const HeaderText = styled(Text)`
 const AddButton = styled(TouchableOpacity)`
   width: 5%;
   height: 100%;
-  background-color: red;
   align-items: center;
   justify-content: center;
 `;
@@ -47,13 +46,16 @@ export default () => {
   const [alarmList, setList] = useState(Array<AlarmData>);
   const [user, setUser] = useState<UserData>();
 
-  var alarmLists: Array<AlarmData> = [];
-
   useFocusEffect(() => {
-    loadUser().then((user) => {
-      setUser(user);
-      setList(user?.alarmData);
-    });
+    if(!user){
+      console.log("DO IT!!");
+      loadUser().then((user) => {
+        if(user){
+        setUser(user);
+        setList(user?.alarmData);
+        }
+      });
+    }
   });
 
   return (

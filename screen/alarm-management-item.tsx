@@ -47,6 +47,14 @@ export default ({ data }: Props) => {
   const dayText = ["월", "화", "수", "목", "금", "토", "일"];
   var displayDay = "";
 
+  const toggleActivation = () => {
+    setIsActivated;
+  };
+
+  const formatNumber = (num: number) => {
+    return num < 10 ? `0${num}` : String(num);
+  };
+
   data.isEveryday ? (displayDay = "매일") : null;
 
   data.dayList.map((e, index) => {
@@ -60,12 +68,12 @@ export default ({ data }: Props) => {
       <Info>
         <ContentText>{data.content}</ContentText>
         <TimeText>
-          {data.hour}:{data.minute}
+          {formatNumber(data.hour)}:{formatNumber(data.minute)}
         </TimeText>
         <DayText>{displayDay}</DayText>
       </Info>
 
-      <Switch style={{}} value={isActivated} onValueChange={setIsActivated} />
+      <Switch value={isActivated} onValueChange={setIsActivated} />
     </Container>
   );
 };

@@ -2,6 +2,7 @@ import { Text, View } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
 import { useEffect, useState } from "react";
+import { RecordData } from "../models/record-data-model";
 
 const Container = styled(View)`
   scroll-margin: 10px;
@@ -35,17 +36,20 @@ const DayText = styled(Text)`
   color: grey;
 `;
 
-export default () => {
-  const [isChecked, setIsChecked] = useState(false);
+export type Props = {
+  record:RecordData;
+}
+
+export default ({record}:Props) => {
+  const [isChecked, setIsChecked] = useState(record.isEaten);
 
   useEffect(() => {});
 
   return (
     <Container>
       <Info>
-        <ContentText>약먹기</ContentText>
-        <TimeText>17:00</TimeText>
-        <DayText>월 화</DayText>
+        <ContentText>{record.alarmContent}</ContentText>
+        <TimeText>{record.alarmTime}</TimeText>
       </Info>
 
       <Checkbox
