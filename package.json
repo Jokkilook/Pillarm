@@ -25,7 +25,8 @@
     "react-native-reanimated": "~3.10.1",
     "react-native-shadow-2": "^7.1.0",
     "react-native-tab-view": "^3.5.2",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "@react-native-community/datetimepicker": "8.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

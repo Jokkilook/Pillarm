@@ -4,7 +4,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import AlarmManagementItem from "./alarm-management-item";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenList } from "../App";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { AlarmData } from "../models/alarm-data-model";
+import { loadAlarm, loadUser } from "./async_storage_helper";
+import { useEffect, useState } from "react";
+import { UserData } from "../models/user-data-model";
 
 const Container = styled(View)`
   height: 100%;
@@ -31,12 +35,26 @@ const HeaderText = styled(Text)`
 `;
 
 const AddButton = styled(TouchableOpacity)`
+  width: 5%;
+  height: 100%;
+  background-color: red;
   align-items: center;
   justify-content: center;
 `;
 
 export default () => {
   const navigations = useNavigation<StackNavigationProp<ScreenList>>();
+  const [alarmList, setList] = useState(Array<AlarmData>);
+  const [user, setUser] = useState<UserData>();
+
+  var alarmLists: Array<AlarmData> = [];
+
+  useFocusEffect(() => {
+    loadUser().then((user) => {
+      setUser(user);
+      setList(user?.alarmData);
+    });
+  });
 
   return (
     <Container>
@@ -51,7 +69,26 @@ export default () => {
         </AddButton>
       </Header>
       <ScrollView style={{ padding: 10 }}>
-        <AlarmManagementItem />
+        {alarmList.reverse().map((alarmData) => {
+          return <AlarmManagementItem data={alarmData} />;
+        })}
+        <AlarmManagementItem
+          data={
+            new AlarmData(
+              "test",
+              12,
+              10,
+              true,
+              [false, false, false, false, false, false, false],
+              "test",
+              5,
+              5,
+              true,
+              "test",
+              true
+            )
+          }
+        />
       </ScrollView>
     </Container>
   );

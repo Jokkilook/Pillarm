@@ -31,13 +31,6 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="AddAlarm"
-          component={AlarmAddScreen}
-          options={({ navigation }) => ({
-            headerTitle: "알람 추가",
-          })}
-        />
-        <Stack.Screen
           name="Main"
           component={MainScreen}
           options={({ navigation }) => ({
@@ -53,7 +46,13 @@ export default function App() {
             ),
           })}
         />
-
+        <Stack.Screen
+          name="AddAlarm"
+          component={AlarmAddScreen}
+          options={({ navigation }) => ({
+            headerTitle: "알람 추가",
+          })}
+        />
         <Stack.Screen name="EditAlarm" component={AlarmEditScreen} />
       </Stack.Navigator>
     </NavigationContainer>
