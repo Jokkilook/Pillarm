@@ -46,17 +46,28 @@ export default () => {
   const [alarmList, setList] = useState(Array<AlarmData>);
   const [user, setUser] = useState<UserData>();
 
-  useFocusEffect(() => {
-    if(!user){
+  useEffect(() => {
+    const unsubscribe = navigations.addListener("focus", () => {
+      // 화면이 focus 됐을 때 필요한 작업 수행 (예: 데이터 새로고침)
+      console.log("RERERE");
+      loadUser().then((user) => {
+        if (user) {
+          setUser(user);
+          setList(user?.alarmData);
+        }
+      });
+    });
+
+    if (!user) {
       console.log("DO IT!!");
       loadUser().then((user) => {
-        if(user){
-        setUser(user);
-        setList(user?.alarmData);
+        if (user) {
+          setUser(user);
+          setList(user?.alarmData);
         }
       });
     }
-  });
+  }, []);
 
   return (
     <Container>

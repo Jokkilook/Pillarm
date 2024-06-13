@@ -6,7 +6,7 @@ import { RecordData } from "../models/record-data-model";
 
 export const loadUser = async () => {
   var data = await AsyncStorage.getItem("user");
-  var map: Map<Date, Array<RecordData>> = new Map();
+  var map: Map<string, Array<RecordData>> = new Map();
   var user: UserData = new UserData([], map);
   if (data) {
     user = UserData.fromJson(JSON.parse(data));

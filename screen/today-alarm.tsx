@@ -39,53 +39,54 @@ const Test = styled(View)`
 export default () => {
   const [user, setUser] = useState<UserData>();
 
-  
   var date = new Date();
-  var tester:UserData|undefined;
+  var dateCode = `${date.getFullYear()}${date.getMonth()}${date.getDay()}`;
+  var tester: UserData | undefined;
 
   const formatNumber = (num: number) => {
     return num < 10 ? `0${num}` : String(num);
   };
 
   useEffect(() => {
-    if(!user){
-      loadUser().then((user) => {
-        
-        if(user){
-        setUser(user);
+    loadUser().then((user) => {
+      tester = user;
+      setUser(user);
+
+      var day = (date.getDay() + 6) % 7; //0부터 월요일
+      var records: Array<RecordData> = [];
+
+      tester.alarmData.forEach((alarm) => {
+        if ((alarm.isEveryday || alarm.dayList[day]) && alarm.isActivated) {
+          console.log(alarm.alarmID);
+          var time = `${formatNumber(alarm.hour)}:${formatNumber(
+            alarm.minute
+          )}`;
+          records.push(
+            new RecordData(dateCode, alarm.alarmID, alarm.content, time, false)
+          );
         }
-
-        var day= (date.getDay()+ 6) % 7;
-        var records:Array<RecordData> = [];
-
-        user.alarmData.map((alarm)=>{
-          if(alarm.isEveryday||alarm.dayList[day]){
-            var time = `${formatNumber(alarm.hour)}:${formatNumber(alarm.minute)}`;
-            records.push(new RecordData(date,alarm.content,time,false))
-            user.records.set(date,records);
-          }
-        });
-        tester = user;
-        setUser(user);
       });
-    }
-  });
+    });
+  }, []);
 
-  
+  console.log("BBB: " + user);
+
+  if (!user) {
+    return (
+      <Container>
+        <Header>
+          <HeaderText>로딩 중...</HeaderText>
+        </Header>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <Header>
         <HeaderText>오늘 알람</HeaderText>
       </Header>
-      <ScrollView style={{ padding: 10 }}>
-        {
-          tester?.records.get(date)?.map((record)=>{
-            return (<TodayAlarmItem record={record}/>);
-          })
-        }
-        <TodayAlarmItem record={new RecordData(date,"TEST","17:00",false)} />
-      </ScrollView>
+      <ScrollView style={{ padding: 10 }}>{}</ScrollView>
     </Container>
   );
 };

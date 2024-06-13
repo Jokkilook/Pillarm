@@ -12,11 +12,7 @@ import {
 } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
-import {
-  loadUser,
-  removeAllAlarm,
-  saveUser,
-} from "./async_storage_helper";
+import { loadUser, removeAllAlarm, saveUser } from "./async_storage_helper";
 import { AlarmData } from "../models/alarm-data-model";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -187,14 +183,12 @@ export default () => {
   const dayText = ["월", "화", "수", "목", "금", "토", "일"];
 
   useEffect(() => {
-    if(!user){
-      loadUser().then((user) => {
-        if(user){
+    loadUser().then((user) => {
+      if (user) {
         setUser(user);
-        }
-      });
-    }
-  });
+      }
+    });
+  }, []);
 
   const onChangeText = (
     e: NativeSyntheticEvent<TextInputChangeEventData>,

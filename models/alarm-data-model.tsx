@@ -1,27 +1,27 @@
 export class AlarmData {
-  alarmID: String;
+  alarmID: string;
   hour: number;
   minute: number;
   isEveryday: boolean;
   dayList: Array<boolean>;
-  content: String;
+  content: string;
   realarmDuration: number;
   realarmTime: number;
   untilCheck: boolean;
-  alarmSoundPath: String;
+  alarmSoundPath: string;
   isActivated: boolean;
 
   constructor(
-    alarmID: String,
+    alarmID: string,
     hour: number,
     minute: number,
     isEveryday: boolean,
     dayList: Array<boolean>,
-    content: String,
+    content: string,
     realarmDuration: number,
     realarmTime: number,
     untilCheck: boolean,
-    alarmSoundPath: String,
+    alarmSoundPath: string,
     isActivated: boolean
   ) {
     this.alarmID = alarmID;

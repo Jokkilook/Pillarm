@@ -9,6 +9,7 @@ import AlarmEditScreen from "./screen/alarm-edit-screen";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import styled from "styled-components";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { AlarmData } from "./models/alarm-data-model";
 
 const DrawerButton = styled(TouchableOpacity)`
   margin: 10px 20px;
@@ -19,7 +20,7 @@ const Stack = createStackNavigator<ScreenList>();
 export type ScreenList = {
   Main: undefined;
   AddAlarm: undefined;
-  EditAlarm: undefined;
+  EditAlarm: AlarmData;
   Login: undefined;
   SignUp: undefined;
 };
@@ -53,7 +54,13 @@ export default function App() {
             headerTitle: "알람 추가",
           })}
         />
-        <Stack.Screen name="EditAlarm" component={AlarmEditScreen} />
+        <Stack.Screen
+          name="EditAlarm"
+          component={AlarmEditScreen}
+          options={({ navigation }) => ({
+            headerTitle: "알람 수정",
+          })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

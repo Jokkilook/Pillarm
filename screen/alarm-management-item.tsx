@@ -1,9 +1,16 @@
-import { Switch, Text, View } from "react-native";
+import { Switch, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { AlarmData } from "../models/alarm-data-model";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ScreenList } from "../App";
+import { UserData } from "../models/user-data-model";
+import { loadUser, saveUser } from "./async_storage_helper";
+
+const Touch = styled(TouchableOpacity)``;
 
 const Container = styled(View)`
   scroll-margin: 10px;
@@ -43,12 +50,34 @@ type Props = {
 };
 
 export default ({ data }: Props) => {
+  const navigations = useNavigation<StackNavigationProp<ScreenList>>();
+
   const [isActivated, setIsActivated] = useState(data.isActivated);
+  const [user, setUser] = useState<UserData>();
   const dayText = ["월", "화", "수", "목", "금", "토", "일"];
   var displayDay = "";
 
-  const toggleActivation = () => {
-    setIsActivated;
+  useEffect(() => {
+    loadUser().then((user) => {
+      setUser(user);
+    });
+  }, []);
+
+  const toggleActivation = (alarmData: AlarmData) => {
+    var tempUser = user;
+    var tempList: AlarmData[] = [];
+    var targetAlarm = alarmData;
+
+    tempUser?.alarmData.forEach((alarm) => {
+      if (alarm.alarmID == targetAlarm.alarmID) {
+        targetAlarm.isActivated = !targetAlarm.isActivated;
+        tempList.push(targetAlarm);
+      } else {
+        tempList.push(alarm);
+      }
+    });
+    tempUser!.alarmData = tempList;
+    saveUser(tempUser!);
   };
 
   const formatNumber = (num: number) => {
@@ -63,17 +92,27 @@ export default ({ data }: Props) => {
     }
   });
 
-  return (
-    <Container>
-      <Info>
-        <ContentText>{data.content}</ContentText>
-        <TimeText>
-          {formatNumber(data.hour)}:{formatNumber(data.minute)}
-        </TimeText>
-        <DayText>{displayDay}</DayText>
-      </Info>
+  const goToEdit = () => {
+    navigations.push("EditAlarm", data);
+  };
 
-      <Switch value={isActivated} onValueChange={setIsActivated} />
-    </Container>
+  return (
+    <Touch onPress={goToEdit}>
+      <Container>
+        <Info>
+          <ContentText>{data.content}</ContentText>
+          <TimeText>
+            {formatNumber(data.hour)}:{formatNumber(data.minute)}
+          </TimeText>
+          <DayText>{displayDay}</DayText>
+        </Info>
+
+        <Switch
+          value={isActivated}
+          onChange={toggleActivation(data)}
+          onValueChange={setIsActivated}
+        />
+      </Container>
+    </Touch>
   );
 };
