@@ -83,6 +83,7 @@ export default () => {
       </Header>
       <ScrollView style={{ padding: 10 }}>
         {alarmList.reverse().map((alarmData) => {
+          console.log(alarmData.minute)
           return <AlarmManagementItem data={alarmData} />;
         })}
         <AlarmManagementItem

@@ -41,7 +41,7 @@ export default () => {
 
   var date = new Date();
   var dateCode = `${date.getFullYear()}${date.getMonth()}${date.getDay()}`;
-  var tester: UserData | undefined;
+  var tester: UserData = UserData.emptyUser();
 
   const formatNumber = (num: number) => {
     return num < 10 ? `0${num}` : String(num);
@@ -57,7 +57,7 @@ export default () => {
 
       tester.alarmData.forEach((alarm) => {
         if ((alarm.isEveryday || alarm.dayList[day]) && alarm.isActivated) {
-          console.log(alarm.alarmID);
+          console.log("CODE:"+ alarm.alarmID);
           var time = `${formatNumber(alarm.hour)}:${formatNumber(
             alarm.minute
           )}`;
@@ -66,27 +66,31 @@ export default () => {
           );
         }
       });
+      tester?.records.set(dateCode,records);
     });
+
+    setUser(tester);
   }, []);
 
-  console.log("BBB: " + user);
+  console.log("LIST: "+tester?.records.get(dateCode));
+  
 
-  if (!user) {
-    return (
-      <Container>
-        <Header>
-          <HeaderText>로딩 중...</HeaderText>
-        </Header>
-      </Container>
-    );
-  }
+  tester?.records.get(dateCode)?.map((record)=>{
+    console.log(record);
+  })
 
   return (
     <Container>
       <Header>
         <HeaderText>오늘 알람</HeaderText>
       </Header>
-      <ScrollView style={{ padding: 10 }}>{}</ScrollView>
+      <ScrollView style={{ padding: 10 }}>
+        {
+        tester?.records.get(dateCode)?.map((record)=>{
+          return <TodayAlarmItem record={record} />
+        })
+        }
+      </ScrollView>
     </Container>
   );
 };

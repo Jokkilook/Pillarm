@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Dimensions,
   NativeSyntheticEvent,
@@ -148,6 +148,17 @@ const AddButtonText = styled(Text)`
   font-weight: bold;
 `;
 
+const CustomHeader = styled(TouchableOpacity)`
+  justify-content: center;
+  align-items: center;
+`;
+
+const HeaderTitle = styled(Text)`
+  color: red;
+  font-size: 20px;
+  margin-right: 15px;
+`;
+
 export type AlarmDatas = {
   alarmID: String;
   isEveryday: boolean;
@@ -162,11 +173,13 @@ export type AlarmDatas = {
 
 export type Props = {
   data: AlarmData;
+  editFunction:()=>{};
+  deleteFunction:()=>{};
 };
 
-export default ({ route }: { route: { params: AlarmData } }) => {
+export default ({ route }: { route: { params } }) => {
   const navigations = useNavigation<StackNavigationProp<ScreenList>>();
-  const data = route.params;
+  const data = route.params.alarm;
 
   const [user, setUser] = useState<UserData>();
   const [hour, setHour] = useState(data.hour);
@@ -242,10 +255,7 @@ export default ({ route }: { route: { params: AlarmData } }) => {
   };
 
   const saveAlarm = async () => {
-    var tempUser = user;
     var id = data.alarmID;
-    var tempList: AlarmData[] = [];
-
     var newData: AlarmData = new AlarmData(
       id,
       hour,
@@ -260,17 +270,7 @@ export default ({ route }: { route: { params: AlarmData } }) => {
       true
     );
 
-    tempUser?.alarmData.forEach((alarm, index) => {
-      if (alarm.alarmID == id) {
-        tempList.push(newData);
-      } else {
-        tempList.push(alarm);
-      }
-    });
-
-    tempUser!.alarmData = tempList;
-    setUser(tempUser);
-    await saveUser(user!);
+    route.params.editFunction(newData);
     navigations.pop();
   };
 
@@ -282,6 +282,18 @@ export default ({ route }: { route: { params: AlarmData } }) => {
   const formatNumber = (num: number) => {
     return num < 10 ? `0${num}` : String(num);
   };
+
+  useLayoutEffect(()=>{
+    navigations.setOptions({
+      headerRight: () => {
+        return (
+          <CustomHeader onPress={route.params.deleteFunction}>
+            <HeaderTitle>삭제</HeaderTitle>
+          </CustomHeader>
+        );
+      },
+    });
+  },[])
 
   return (
     <SafeContainer>

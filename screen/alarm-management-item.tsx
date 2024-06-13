@@ -109,7 +109,7 @@ export default ({ data }: Props) => {
 
         <Switch
           value={isActivated}
-          onChange={toggleActivation(data)}
+          onChange={()=>toggleActivation(data)}
           onValueChange={setIsActivated}
         />
       </Container>
