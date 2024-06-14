@@ -1,18 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AlarmDatas } from "./alarm-add-screen";
+import { AlarmDatas } from "./alarm-add/alarm-add-screen";
 import { AlarmData } from "../models/alarm-data-model";
 import { UserData } from "../models/user-data-model";
 import { RecordData } from "../models/record-data-model";
 
+export const resetUser = async () => {
+  await AsyncStorage.setItem("user", JSON.stringify(UserData.emptyUser()));
+};
+
 export const loadUser = async () => {
   var data = await AsyncStorage.getItem("user");
-  var map: Map<string, Array<RecordData>> = new Map();
-  var user: UserData = new UserData("",[], map);
   if (data) {
-    user = UserData.fromJson(JSON.parse(data));
+    return UserData.fromJson(JSON.parse(data));
+  } else {
+    return new UserData("", [], new Map());
   }
-
-  return user;
 };
 
 export const saveUser = async (data: UserData) => {

@@ -1,5 +1,6 @@
 export class AlarmData {
   alarmID: string;
+  createdAt: Date;
   hour: number;
   minute: number;
   isEveryday: boolean;
@@ -13,6 +14,7 @@ export class AlarmData {
 
   constructor(
     alarmID: string,
+    createdAt: Date,
     hour: number,
     minute: number,
     isEveryday: boolean,
@@ -25,6 +27,7 @@ export class AlarmData {
     isActivated: boolean
   ) {
     this.alarmID = alarmID;
+    this.createdAt = createdAt;
     this.hour = hour;
     this.minute = minute;
     this.isEveryday = isEveryday;
@@ -40,6 +43,7 @@ export class AlarmData {
   static fromJson(json: any): AlarmData {
     return new AlarmData(
       json.alarmID,
+      json.createdAt,
       json.hour,
       json.minute,
       json.isEveryday,

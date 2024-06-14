@@ -12,12 +12,12 @@ import {
 } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
-import { loadUser, removeAllAlarm, saveUser } from "./async_storage_helper";
-import { AlarmData } from "../models/alarm-data-model";
+import { loadUser, removeAllAlarm, saveUser } from "../async_storage_helper";
+import { AlarmData } from "../../models/alarm-data-model";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ScreenList } from "../App";
-import { UserData } from "../models/user-data-model";
+import { ScreenList } from "../../App";
+import { UserData } from "../../models/user-data-model";
 
 // {}를 써서 Dimensions 가 반환하는 여러 값에 접근하고 :를 써서 별칭을 붙여줌
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("screen");
@@ -169,7 +169,7 @@ export default () => {
   const [content, setContent] = useState("");
   const [reMinute, setReMinute] = useState(0);
   const [time, setTime] = useState(0);
-  const [isEveryday, setIsEveryday] = useState(false);
+  const [isEveryday, setIsEveryday] = useState(true);
   const [untilEat, setUntilEat] = useState(false);
   const [dayList, setDayList] = useState([
     false,
@@ -245,10 +245,14 @@ export default () => {
   };
 
   const addAlarm = async () => {
+    if (content === "") {
+      return;
+    }
     var tempUser = user;
     var id = "A" + Date.now();
     var data: AlarmData = new AlarmData(
       id,
+      new Date(),
       hour,
       minute,
       isEveryday,
@@ -278,7 +282,10 @@ export default () => {
   return (
     <SafeContainer>
       <ScrollView
-        contentContainerStyle={{ maxHeight: HEIGHT, alignItems: "center" }}
+        contentContainerStyle={{
+          maxHeight: HEIGHT,
+          alignItems: "center",
+        }}
       >
         <TimeSection>
           <RowSection>
@@ -363,7 +370,7 @@ export default () => {
         <SoundSection>
           <TitleText>알람음</TitleText>
         </SoundSection>
-        <AddButton onPress={addAlarm}>
+        <AddButton onPress={() => addAlarm()}>
           <AddButtonText>추가하기</AddButtonText>
         </AddButton>
       </ScrollView>

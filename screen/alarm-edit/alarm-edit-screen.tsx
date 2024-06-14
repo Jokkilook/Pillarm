@@ -12,12 +12,12 @@ import {
 } from "react-native";
 import styled from "styled-components";
 import Checkbox from "expo-checkbox";
-import { loadUser, removeAllAlarm, saveUser } from "./async_storage_helper";
-import { AlarmData } from "../models/alarm-data-model";
+import { loadUser, removeAllAlarm, saveUser } from "../async_storage_helper";
+import { AlarmData } from "../../models/alarm-data-model";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ScreenList } from "../App";
-import { UserData } from "../models/user-data-model";
+import { ScreenList } from "../../App";
+import { UserData } from "../../models/user-data-model";
 
 // {}를 써서 Dimensions 가 반환하는 여러 값에 접근하고 :를 써서 별칭을 붙여줌
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("screen");
@@ -171,13 +171,7 @@ export type AlarmDatas = {
   isActivated: boolean;
 };
 
-export type Props = {
-  data: AlarmData;
-  editFunction:()=>{};
-  deleteFunction:()=>{};
-};
-
-export default ({ route }: { route: { params } }) => {
+export default ({ route }: { route: { params: any } }) => {
   const navigations = useNavigation<StackNavigationProp<ScreenList>>();
   const data = route.params.alarm;
 
@@ -194,9 +188,7 @@ export default ({ route }: { route: { params } }) => {
 
   useEffect(() => {
     loadUser().then((user) => {
-      if (user) {
-        setUser(user);
-      }
+      setUser(user);
     });
   }, []);
 
@@ -255,9 +247,13 @@ export default ({ route }: { route: { params } }) => {
   };
 
   const saveAlarm = async () => {
+    if (content === "") {
+      return;
+    }
     var id = data.alarmID;
     var newData: AlarmData = new AlarmData(
       id,
+      new Date(),
       hour,
       minute,
       isEveryday,
@@ -274,6 +270,11 @@ export default ({ route }: { route: { params } }) => {
     navigations.pop();
   };
 
+  const deleteAlarm = async () => {
+    route.params.deleteFunction(data);
+    navigations.pop();
+  };
+
   const toggleEveryday = () => {
     setDayList([false, false, false, false, false, false, false]);
     setIsEveryday(!isEveryday);
@@ -283,17 +284,17 @@ export default ({ route }: { route: { params } }) => {
     return num < 10 ? `0${num}` : String(num);
   };
 
-  useLayoutEffect(()=>{
+  useLayoutEffect(() => {
     navigations.setOptions({
       headerRight: () => {
         return (
-          <CustomHeader onPress={route.params.deleteFunction}>
+          <CustomHeader onPress={() => deleteAlarm()}>
             <HeaderTitle>삭제</HeaderTitle>
           </CustomHeader>
         );
       },
     });
-  },[])
+  }, []);
 
   return (
     <SafeContainer>
@@ -383,7 +384,7 @@ export default ({ route }: { route: { params } }) => {
         <SoundSection>
           <TitleText>알람음</TitleText>
         </SoundSection>
-        <AddButton onPress={saveAlarm}>
+        <AddButton onPress={() => saveAlarm()}>
           <AddButtonText>저장하기</AddButtonText>
         </AddButton>
       </ScrollView>

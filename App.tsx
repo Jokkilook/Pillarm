@@ -1,11 +1,11 @@
 import { TouchableOpacity } from "react-native";
-import MainScreen from "./screen/main-screen";
+import MainScreen from "./screen/main/main-container";
 import {
   StackNavigationProp,
   createStackNavigator,
 } from "@react-navigation/stack";
-import AlarmAddScreen from "./screen/alarm-add-screen";
-import AlarmEditScreen from "./screen/alarm-edit-screen";
+import AlarmAddScreen from "./screen/alarm-add/alarm-add-screen";
+import AlarmEditScreen from "./screen/alarm-edit/alarm-edit-screen";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import styled from "styled-components";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,7 +20,11 @@ const Stack = createStackNavigator<ScreenList>();
 export type ScreenList = {
   Main: undefined;
   AddAlarm: undefined;
-  EditAlarm: AlarmData;
+  EditAlarm: {
+    alarm: AlarmData;
+    editFunction: (alarm: AlarmData) => void;
+    deleteFunction: (alarm: AlarmData) => void;
+  };
   Login: undefined;
   SignUp: undefined;
 };
