@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import { UserData } from "../../models/user-data-model";
 import LoadingScreen from "../loading-screen";
-import { MarkedDates } from "react-native-calendars/src/types";
+import { DateData, MarkedDates } from "react-native-calendars/src/types";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 const SafeContainer = styled(View)`
   background-color: white;
@@ -39,9 +40,11 @@ type Props = {
 };
 
 export default ({ user, loading, checkers }: Props) => {
-  const setMark = () => {};
+  const setMark = (day:DateData) => {console.log(day)};
 
-  console.log(user);
+  // useLayoutEffect(()=>{
+  //   Header
+  // })
 
   return loading ? (
     <LoadingScreen />
@@ -49,7 +52,7 @@ export default ({ user, loading, checkers }: Props) => {
     <SafeContainer>
       <CalendarContainer>
         <Calendar
-          scr
+          onDayPress={(day)=>{setMark(day)}}
           markedDates={checkers}
           theme={{
             selectedDayBackgroundColor: "blue",

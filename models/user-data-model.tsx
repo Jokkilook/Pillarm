@@ -12,11 +12,21 @@ export class UserData {
   ) {
     this.id = id;
     this.alarmData = alarmData;
-    this.records = records ?? new Map();
+    this.records = records;
   }
 
   static fromJson(json: any): UserData {
-    return new UserData(json.id, json.alarmData, json.records);
+    const alarmData = json.alarmData.map((alarm: any) => AlarmData.fromJson(alarm));
+
+    const recordsMap = new Map<string, Array<RecordData>>();
+    for (const key in json.records) {
+      if (json.records.hasOwnProperty(key)) {
+        const recordArray = json.records[key].map((record: any) => RecordData.fromJson(record));
+        recordsMap.set(key, recordArray);
+      }
+    }
+
+    return new UserData(json.id, alarmData, recordsMap);
   }
 
   static emptyUser(): UserData {

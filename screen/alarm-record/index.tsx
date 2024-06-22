@@ -1,3 +1,3 @@
-import todayAlarm from "./today-alarm-container";
+import todayAlarm from "./alarm-record-container";
 
 export default todayAlarm;

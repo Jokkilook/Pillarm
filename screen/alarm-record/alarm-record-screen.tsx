@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { UserData } from "../../models/user-data-model";
 import { RecordData } from "../../models/record-data-model";
 import LoadingScreen from "../loading-screen";
-import TodayAlarmItem from "./widget/today-alarm-item";
+import TodayAlarmItem from "./widget/record-item";
 import { saveUser } from "../async_storage_helper";
 
 const Container = styled(View)`

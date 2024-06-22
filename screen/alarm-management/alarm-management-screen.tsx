@@ -1,11 +1,9 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import AlarmManagementItem from "./widget/alarm-management-item";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenList } from "../../App";
 import { useNavigation } from "@react-navigation/native";
-
 import { UserData } from "../../models/user-data-model";
 import LoadingScreen from "../loading-screen";
 
@@ -34,10 +32,15 @@ const HeaderText = styled(Text)`
 `;
 
 const AddButton = styled(TouchableOpacity)`
-  width: 5%;
+  /* width: 5%; */
   height: 100%;
   align-items: center;
   justify-content: center;
+`;
+
+const ButtonText = styled(Text)`
+  color:#0097ec;
+  
 `;
 
 type Props = {
@@ -57,9 +60,8 @@ export default ({ user, loading }: Props) => {
         <AddButton
           onPress={() => {
             navigations.navigate("AddAlarm");
-          }}
-        >
-          <Ionicons name="add" size={30} color="black" />
+          }} >
+            <ButtonText>추가하기</ButtonText>
         </AddButton>
       </Header>
       <ScrollView style={{ padding: 10, backgroundColor: "#F5F5F5" }}>

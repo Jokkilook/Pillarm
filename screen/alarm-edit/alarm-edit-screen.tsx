@@ -241,6 +241,7 @@ export default ({ route }: { route: { params: any } }) => {
   };
 
   const onChangeDay = (index: number) => {
+    setIsEveryday(false);
     const list = [...dayList];
     list[index] = !list[index];
     setDayList(list);
@@ -330,7 +331,7 @@ export default ({ route }: { route: { params: any } }) => {
             {dayText.map((e, index) => {
               return (
                 <DayButton
-                  disabled={isEveryday}
+                  disabled={false}
                   key={index}
                   selected={dayList[index]}
                   onPress={() => {

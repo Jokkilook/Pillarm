@@ -18,4 +18,14 @@ export class RecordData {
     this.alarmTime = alarmTime;
     this.isEaten = isEaten;
   }
+
+  static fromJson(json: any): RecordData {
+    return new RecordData(
+      json.date,
+      json.alarmId,
+      json.alarmContent,
+      json.alarmTime,
+      json.isEaten
+    );
+  }
 }

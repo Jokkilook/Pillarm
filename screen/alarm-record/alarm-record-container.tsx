@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserData } from "../../models/user-data-model";
 import { loadUser, saveUser } from "../async_storage_helper";
-import TodayAlarmScreen from "./today-alarm-screen";
+import TodayAlarmScreen from "./alarm-record-screen";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenList } from "../../App";
@@ -32,34 +32,42 @@ export default () => {
     date.getMonth()
   )}${formatNumber(date.getDay())}`;
 
-  const init = () => {
-    loadUser().then((user) => {
-      setLoading(true);
+  const init = async () => {
+    try {
+      setLoading(true); // 비동기 작업 시작 전에 로딩 상태 설정
+  
+      const user = await loadUser();
       setUser(user);
+      console.log(user);
+  
+      let tempUser = { ...user }; // 상태 객체를 직접 수정하지 않기 위해 사용자 객체 복제
+      const day = (date.getDay() + 6) % 7; // 0은 월요일
+      let records: Array<RecordData> = [];
+  
+      if (!tempUser.records) {
+        tempUser.records = new Map<string, Array<RecordData>>();
+      }
 
-      var tempUser = user;
-      var day = (date.getDay() + 6) % 7; //0부터 월요일
-      var records: Array<RecordData> = [];
-
-      if (tempUser.records) tempUser.records = new Map();
-
+      if(tempUser.records.get(dateCode) == null) {
+  
       tempUser.alarmData.forEach((alarm) => {
         if ((alarm.isEveryday || alarm.dayList[day]) && alarm.isActivated) {
-          var time = `${formatNumber(alarm.hour)}:${formatNumber(
-            alarm.minute
-          )}`;
-          records.push(
-            new RecordData(dateCode, alarm.alarmID, alarm.content, time, false)
-          );
+          const time = `${formatNumber(alarm.hour)}:${formatNumber(alarm.minute)}`;
+          records.push(new RecordData(dateCode, alarm.alarmID, alarm.content, time, false));
         }
       });
+    }
+  
       tempUser.records.set(dateCode, records);
       setList(tempUser.records.get(dateCode) ?? []);
       setUser(tempUser);
-      saveUser(tempUser);
-
-      setLoading(false);
-    });
+      await saveUser(tempUser);
+  
+    } catch (error) {
+      console.error("사용자 데이터를 초기화하는 데 실패했습니다:", error);
+    } finally {
+      setLoading(false); // 작업이 끝난 후 로딩 상태 해제
+    }
   };
 
   useEffect(() => {

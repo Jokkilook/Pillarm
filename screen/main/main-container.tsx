@@ -12,7 +12,6 @@ export default () => {
   useEffect(() => {
     loadUser().then((user) => {
       setUser(user);
-      console.log(user);
       try {
         user.records.forEach((list, date) => {
           var check = true;

@@ -8,8 +8,15 @@ import AlarmAddScreen from "./screen/alarm-add/alarm-add-screen";
 import AlarmEditScreen from "./screen/alarm-edit/alarm-edit-screen";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import styled from "styled-components";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 import { AlarmData } from "./models/alarm-data-model";
+import loginScreen from "./screen/login/login-screen";
+import registerScreen from "./screen/login/register-screen";
+import { useEffect, useState } from "react";
+import * as firebase from "firebase/auth";
+import { auth } from "./firebaseConfig";
+
+
 
 const DrawerButton = styled(TouchableOpacity)`
   margin: 10px 20px;
@@ -26,11 +33,24 @@ export type ScreenList = {
     deleteFunction: (alarm: AlarmData) => void;
   };
   Login: undefined;
-  SignUp: undefined;
+  Register: undefined;
 };
 
 export default function App() {
   // const navigations = useNavigation<StackNavigationProp<ScreenList>>();
+  const [user,setUser] = useState<firebase.User | null>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    auth.onAuthStateChanged((userState:firebase.User | null)=>{
+      if(userState){
+        setUser(userState);
+      }else{
+        setUser(null);
+      }
+      setLoading(false);
+    })
+  },[])
 
   return (
     <NavigationContainer>
@@ -65,6 +85,8 @@ export default function App() {
             headerTitle: "알람 수정",
           })}
         />
+        <Stack.Screen name="Login" component={loginScreen} />
+        <Stack.Screen name="Register" component={registerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
